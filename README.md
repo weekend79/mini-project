@@ -1,7 +1,4 @@
-# Code Institute
+# Flask Chat App
 
-Welcome USER_NAME,
-
-Use this workspace template when you need the Heroku command-line tools. Type `heroku` in the terminal window to run the Heroku toolbelt.
-
-Happy coding!
+This is a chat application written i Flask. The purpose of this project is to take data from 
+a URL and store the information in a list.
