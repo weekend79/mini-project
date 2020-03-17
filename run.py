@@ -1,14 +1,17 @@
 # Import os and Flask
 import os
-from flask import Flask, redirect
+from datetime import datetime
+from flask import Flask, redirect, render_template, request, session
 
 # Initialize the Flask application 
 app = Flask(__name__)
+app.secret_key = "randomstring123"
 messages = []
 
 def add_messages(username, message):
     """Add messages to the `messages` list"""
-    messages.append("{}: {}".format(username, message))
+    now = datetime.now().strftime("%H:%M:%S")
+    messages.append("({}){}: {}".format(now, username, message))
 
 def get_all_messages():
     """Get all of the messages and separate them with a `br`"""
@@ -16,12 +19,18 @@ def get_all_messages():
 
 
 # Setting the App route decorator / Where to start our App from
-@app.route('/') # The route is set with ('/') since this is the only text after the domain-name.com in the url.
+@app.route('/', methods = ["GET", "POST"]) # The route is set with ('/') since this is the only text after the domain-name.com in the url.
 # Define my variable of the index page 
 def index():
-    # Returing how to send a message
     """Main page with instructions"""
-    return "To send a message use /USERNAME/MESSAGE"
+    if request.method == "POST":
+        session["username"] = request.form["username"]
+
+    if "username" in session:
+        return redirect(session["username"])
+
+
+    return render_template("index.html")
 
 # A app route for the username
 @app.route('/<username>')
