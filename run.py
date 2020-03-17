@@ -11,11 +11,8 @@ messages = []
 def add_messages(username, message):
     """Add messages to the `messages` list"""
     now = datetime.now().strftime("%H:%M:%S")
-    messages.append("({}){}: {}".format(now, username, message))
-
-def get_all_messages():
-    """Get all of the messages and separate them with a `br`"""
-    return "<br>".join(messages)
+    messages_dict = {"timestamp": now, "from": username, "message": message}
+    messages.append(messages_dict)
 
 
 # Setting the App route decorator / Where to start our App from
@@ -33,11 +30,18 @@ def index():
     return render_template("index.html")
 
 # A app route for the username
-@app.route('/<username>')
+@app.route('/<username>', methods = ["GET", "POST"])
 # New def function for username and what it will return
 def user(username):
     """Display chat messages"""
-    return "<h1>Welcome, {0}</h1>{1}".format(username, get_all_messages())
+
+    if request.method == "POST":
+        username = session["username"]
+        message = request.form["message"]
+        add_messages(username, message)
+        return redirect(session["username"])
+
+    return render_template("chat.html", username = username, chat_messages = messages)
 
 # A App route for sending messages.
 @app.route('/<username>/<message>')
